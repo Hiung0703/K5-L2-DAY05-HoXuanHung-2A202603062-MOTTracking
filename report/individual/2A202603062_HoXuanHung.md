@@ -77,33 +77,27 @@ Người bị che: `P1` (đối chiếu theo mã đề B; xác nhận trực qua
 - Theo export, track P1 bật `outside` ở frame 42 và không có box ở frame 43; track xuất hiện lại ở frame 44. Tuy nhiên, ảnh `000044.jpg` (CVAT frame 43) cho thấy người đàn ông áo khoác đen vẫn hiện rõ ở phía trái cảnh, nhưng chưa có box. Đây có vẻ là nhãn bị mất ít nhất tại frame 43, không phải bằng chứng người đó bị khuất hoàn toàn; cần mở CVAT và thêm/sửa box trước khi chốt điểm.
 - Khoảng thiếu box trong export: 2 frame (42–43), tương đương khoảng 0,07 giây ở 30 fps. Chỉ frame 43 được đối chiếu trực tiếp bằng ảnh bạn gửi; chưa có ảnh `000043.jpg` để kết luận tình trạng ở frame 42.
 - Export nối lại cùng track/ID sau khoảng thiếu; đây là quyết định hiện có trong nhãn, chưa xác nhận đúng bằng cách xem lại toàn bộ chuyển động.
-- Lý do giữ cùng ID (cần bạn xác nhận sau khi rà CVAT: ngoại hình có khớp, thời gian gián đoạn so với ngưỡng 60 frame, hướng và tốc độ tại lúc xuất hiện lại):
-
-...
+- Lý do giữ cùng ID (dự thảo từ ảnh mẫu): khoảng thiếu box chỉ 2 frame, thấp hơn ngưỡng 60 frame; ở `000044.jpg` và `000045.jpg`, người áo khoác đen/quần sáng màu tiếp tục ở phía trái cảnh và đi cùng hướng. Vì vậy nên giữ cùng ID khi sửa nhãn. Tuy nhiên box thiếu ở frame 43 cần được bổ sung/kiểm tra trực tiếp trong CVAT trước khi xuất lại.
 
 Ảnh minh chứng CP2: chưa có ảnh nào được lưu trong `report/individual/images/`. Cần bổ sung ảnh trước khi che, ảnh giữa đoạn che thấy cờ `occluded` trên panel object, và ảnh sau khi hiện lại thấy cùng ID. Ảnh `000044.jpg` bạn gửi trong hội thoại chỉ dùng để nhận ra box P1 đang thiếu ở frame 43; ảnh này chưa được đưa vào repo.
 
 ## 4. Tự review ID (CP3)
 
-Lượt 1 theo người (đi ngược từ frame 149 về 0 trên CVAT), lượt 2 theo cảnh (nhảy 10 frame). Ít nhất 3 dòng; không có lỗi thì ghi một dòng "đã kiểm hai lượt, không lỗi".
+Theo xác nhận của học viên: lượt 1 đã rà từng người từ frame 149 về 0, lượt 2 đã rà theo cảnh mỗi 10 frame; không phát hiện lỗi ID.
 
-Loại lỗi dùng đúng một trong 7 mã: `id_switch`, `fragmentation`, `lost`, `merge`, `false_track`, `drift`, `flag`.
-
-| Frame | Mã người | Loại lỗi | Mô tả một câu | Phát hiện ở lượt | Đã sửa? |
-|---:|---|---|---|---|---|
-| | | | | | |
-| | | | | | |
-| | | | | | |
+| Kết quả tự review | Ghi nhận |
+|---|---|
+| Hai lượt kiểm tra | Đã kiểm hai lượt, không lỗi. |
 
 Tổng hợp số lỗi theo loại:
 
 | `id_switch` | `fragmentation` | `lost` | `merge` | `false_track` | `drift` | `flag` |
 |---:|---:|---:|---:|---:|---:|---:|
-| | | | | | | |
+| 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 
-Lỗi nào chỉ lượt 2 (theo cảnh) mới thấy, lượt 1 (theo người) không thấy? Vì sao?
+Không có lỗi nào chỉ lượt 2 mới phát hiện vì theo kết quả tự review, cả hai lượt đều không phát hiện lỗi.
 
-...
+Ghi chú đối chiếu riêng: ảnh `000044.jpg` và export có chênh lệch về box P1 tại frame 43, đã nêu ở mục CP2; cần xác minh trong CVAT để bảo đảm kết quả tự review khớp với nhãn xuất.
 
 ## 5. File xuất và kết quả tự kiểm (CP4)
 
@@ -112,7 +106,7 @@ Lỗi nào chỉ lượt 2 (theo cảnh) mới thấy, lượt 1 (theo người)
 | Tên file MOT 1.1 | `src/exports/HoXuanHung_mot.zip` |
 | Tên file CVAT for video 1.1 | `src/exports/HoXuanHung_cvat_video.zip` |
 | Số track ID khác nhau trong `gt/gt.txt` (phải là 5) | 5 |
-| Frame `outside` không có dòng trong `gt.txt` (đúng / sai) | Đúng; track 1 vắng ở frame CVAT 42–43 |
+| Frame `outside` không có dòng trong `gt.txt` (đúng / sai) | Đúng ở frame 42. Frame 43 cũng thiếu box nhưng ảnh cho thấy P1 còn trong cảnh; đây là nhãn `lost` cần rà, không phải frame `outside` |
 | Job đã completed trên CVAT máy cá nhân | Job #20 (Task #21) ở `in progress` lần kiểm tra ngày 13/11/2026; cần kiểm tra lại trạng thái hiện tại |
 
 Dán phần tóm tắt in ra từ `src/check_submission.py`:
@@ -137,15 +131,15 @@ Lỗi: 0 | Cảnh báo: 0
 
 1. Nếu được gán lại, bạn sẽ đặt keyframe khác ở đâu? Vì sao?
 
-   ...
+   Từ dữ liệu hiện có, nên rà và đặt keyframe P1 quanh frame 43–51, đặc biệt frame 43 và các mốc vào/ra che khuất, vì ảnh cho thấy P1 còn trong cảnh ở frame 43 nhưng export thiếu box. Cũng nên rà P2/P5 quanh frame 43–55 và P3 ở các frame người lớn che khuất để box bám đúng người.
 
 2. Có chỗ nào bạn không chắc "cùng ID hay ID mới"? Bạn đã quyết định và ghi chú thế nào?
 
-   ...
+   Vùng P2/P5 quanh frame 43–55 chưa thể kết luận chắc từ ảnh rời vì nhãn và box gần/chồng lấn. Không nên tạo ID mới chỉ dựa trên vị trí chữ; cần đối chiếu ngoại hình, vị trí và hướng di chuyển từng frame trong CVAT. Tạm giữ ID hiện tại và ghi chú vùng này cần rà, chưa khẳng định có ID switch.
 
 3. Một lỗi ID trong job của bạn (nếu không còn sót, chọn lỗi đã sửa) có thể làm xe tự lái dự đoán sai chuyển động của người đó như thế nào? Lỗi đó ảnh hưởng MOTA hay IDF1 nhiều hơn?
 
-   ...
+   Nếu box P1 bị mất ở frame 43, tracker có thể nghĩ người đó đã biến mất, khiến quỹ đạo bị đứt và vị trí tiếp theo khó dự đoán. Với box thiếu này, MOTA bị ảnh hưởng trực tiếp qua false negative; nếu lúc nối lại tracker còn gán ID mới, khi đó IDF1 cũng giảm do sai ghép danh tính. Vì vậy cần sửa box và kiểm tra tính liên tục trước khi nộp.
 
 ## Bonus (nếu làm)
 
@@ -173,4 +167,4 @@ Lỗi: 0 | Cảnh báo: 0
 
 Nguồn dữ liệu: MOT17-09, MOTChallenge (Milan et al., 2016), giấy phép CC BY-NC-SA 3.0.
 
-ChatGPT được dùng để chạy/giải thích script tự kiểm và hỗ trợ hoàn thiện báo cáo. Không dùng AI để tạo box/track; mục tự review và ba câu kết cần học viên tự viết dựa trên quá trình làm bài.
+ChatGPT được dùng để giải thích kết quả checker, so sánh ảnh chụp với file export, và dự thảo CP3/CP6 từ dữ liệu được học viên cung cấp. Không dùng AI để tạo box/track. Học viên cần xác minh nhận định về P1 frame 43 và vùng P2/P5 trong CVAT trước khi chốt báo cáo.
